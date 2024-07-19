@@ -10,6 +10,7 @@ public class GuiUtil {
     public static final int HORASALIDA = 2;
     public static final int HORALLEGADA = 3;
     public static final int PATENTE = 4;
+    public static final int EVENTO = 5;
 
 
 

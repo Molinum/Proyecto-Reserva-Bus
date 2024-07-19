@@ -7,15 +7,17 @@ import main.java.logic.BusC;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
-public class MainPanel extends JPanel {
+public class MainPanel extends JLayeredPane  implements MouseListener{
 
     private JTable table;
     private JScrollPane scroll;
     private ArrayList<Bus> buses = new ArrayList<>();
-    private String[] titles = {"Inicio","Destino","Hora Salida","Hora Llegada", "Patente"};
+    private String[] titles = {"Inicio","Destino","Hora Salida","Hora Llegada", "Patente", "Ver"};
     MyTableModel model;
     private BusAPanel A;
     private BusBPanel B;
@@ -27,18 +29,28 @@ public class MainPanel extends JPanel {
         this.setSize(GuiUtil.WIDTH,GuiUtil.HEIGHT);
         this.setBackground(Color.gray);
         this.setLayout(new BorderLayout());
+
         this.initializeComponents();
         this.makeTable();
         scroll = new JScrollPane(table);
-        this.add(scroll);
 
+        this.A = new BusAPanel((BusA) buses.get(0));
+        this.B = new BusBPanel((BusB) buses.get(1));
+        this.C = new BusCPanel((BusC) buses.get(2));
+
+        this.add(A);
+        this.add(scroll);
+        setLayer(A,MODAL_LAYER);
+        setLayer(scroll,DEFAULT_LAYER);
     }
 
     private void initializeComponents(){
         scroll = new JScrollPane();
         this.add(scroll);
 
+
         table = new JTable();
+        table.addMouseListener(this);
         scroll.setViewportView(table);
     }
     private void initializeBuses(){
@@ -55,6 +67,7 @@ public class MainPanel extends JPanel {
             data[i][GuiUtil.HORASALIDA] = buses.get(i).getHoraSalida();
             data[i][GuiUtil.HORALLEGADA] = buses.get(i).getHoraLlegada();
             data[i][GuiUtil.PATENTE] = buses.get(i).getPatente();
+            data[i][GuiUtil.EVENTO] = null;
         }
         return data;
     }
@@ -67,6 +80,41 @@ public class MainPanel extends JPanel {
     private void makeTable(Object[][] data, String[] titles){
         model = new MyTableModel(data, titles);
         table.setModel(model);
+        table.getColumn("Ver").setCellRenderer(new ButtonRenderer());
+        table.getColumn("Ver").setCellEditor(new ButtonEditor(new JCheckBox()));
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        int row = table.rowAtPoint(e.getPoint());
+        int col = table.columnAtPoint(e.getPoint());
+
+        if(col == GuiUtil.EVENTO){
+            switch (row){
+                case 0:
+                    A.setVisible(true);
+
+            }
+        }
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
 
     }
 }
